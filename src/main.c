@@ -58,6 +58,31 @@ void emulator_update(void)
     fflush(stdout);
 }
 
+// DIP EXTENDED BIOS 
+static void int61(void)
+{
+    debug(debug_int, "calling DIP DOS Extended BIOS\n");
+    unsigned ax = cpuGetAX();
+    switch(ax)
+    {
+    case 0x1801:
+        debug(debug_dos, "W-611801: Set Mute State\n");
+        break;
+    case 0x1803:
+        debug(debug_dos, "W-611803: Set Key Click State\n");
+        break;
+    case 0x1805:
+        debug(debug_dos, "W-611805: Set Bleep State\n");
+        break;
+    case 0x1807:
+        debug(debug_dos, "W-611807: Set Alarm State\n");
+        break;
+    case 0x1809:
+        debug(debug_dos, "W-611809: Set DTMF duration\n");
+        break;
+    }
+}
+
 // BIOS - GET EQUIPMENT FLAG
 static void int11(void)
 {
@@ -83,7 +108,9 @@ static void int19(void)
 // DOS/BIOS interface
 void bios_routine(unsigned inum)
 {
-    if(inum == 0x21)
+    if(inum == 0x61)
+        int61();
+    else if(inum == 0x21)
         int21();
     else if(inum == 0x20)
         int20();
